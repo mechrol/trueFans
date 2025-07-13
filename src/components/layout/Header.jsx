@@ -26,6 +26,10 @@ const Header = () => {
               <NavLink to="/venue-portal">Venue Portal</NavLink>
               {location.pathname === '/venue-portal' && <ActiveIndicator layoutId="activeNav" />}
             </NavItem>
+            <NavItem isActive={location.pathname.includes('/community')}>
+              <NavLink to="/community">Community</NavLink>
+              {location.pathname.includes('/community') && <ActiveIndicator layoutId="activeNav" />}
+            </NavItem>
           </NavList>
         </Navigation>
         <AuthButtons>

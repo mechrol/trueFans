@@ -1,440 +1,678 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { motion } from 'framer-motion'
+import { 
+  User, 
+  BarChart3, 
+  Calendar, 
+  Music, 
+  Users, 
+  Settings,
+  Play,
+  Pause,
+  Heart,
+  MessageCircle,
+  Share2,
+  TrendingUp,
+  DollarSign,
+  Eye,
+  MapPin,
+  Clock,
+  Star
+} from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
-const ArtistDashboard = () => {
-  // Mock data for demonstration
-  const upcomingShows = [
-    { id: 1, venue: 'The Blue Note', location: 'New York, NY', date: '2023-06-15', time: '8:00 PM', status: 'confirmed' },
-    { id: 2, venue: 'Jazz Alley', location: 'Seattle, WA', date: '2023-06-22', time: '7:30 PM', status: 'confirmed' },
-    { id: 3, venue: 'The Fillmore', location: 'San Francisco, CA', date: '2023-07-05', time: '9:00 PM', status: 'pending' },
-  ]
-  
-  const fanStats = {
-    total: 1245,
-    newThisMonth: 87,
-    engagement: '23%',
-    topCities: ['New York', 'Los Angeles', 'Chicago', 'Austin']
-  }
-  
-  const recentMessages = [
-    { id: 1, from: 'The Blue Note', subject: 'Upcoming show details', date: '2023-05-28', read: true },
-    { id: 2, from: 'Jane Smith (Fan)', subject: 'Loved your last album!', date: '2023-05-27', read: false },
-    { id: 3, from: 'Booking Agent', subject: 'New opportunity in Miami', date: '2023-05-25', read: true },
-  ]
-
-  return (
-    <PageWrapper
-      as={motion.main}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <Container>
-        <DashboardHeader>
-          <WelcomeSection>
-            <ArtistAvatar src="https://images.pexels.com/photos/1699159/pexels-photo-1699159.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Artist" />
-            <WelcomeText>
-              <Greeting>Welcome back, Sarah</Greeting>
-              <Status>Your artist profile is <StatusHighlight>90% complete</StatusHighlight></Status>
-            </WelcomeText>
-          </WelcomeSection>
-          <ActionButtons>
-            <ActionButton>Edit Profile</ActionButton>
-            <ActionButton primary>Book a Venue</ActionButton>
-          </ActionButtons>
-        </DashboardHeader>
-        
-        <DashboardGrid>
-          <DashboardCard>
-            <CardHeader>
-              <CardTitle>Upcoming Shows</CardTitle>
-              <ViewAllLink>View All</ViewAllLink>
-            </CardHeader>
-            <ShowsList>
-              {upcomingShows.map(show => (
-                <ShowItem key={show.id}>
-                  <ShowDate>
-                    <ShowDay>{new Date(show.date).toLocaleDateString('en-US', { day: 'numeric' })}</ShowDay>
-                    <ShowMonth>{new Date(show.date).toLocaleDateString('en-US', { month: 'short' })}</ShowMonth>
-                  </ShowDate>
-                  <ShowDetails>
-                    <ShowVenue>{show.venue}</ShowVenue>
-                    <ShowLocation>{show.location} • {show.time}</ShowLocation>
-                  </ShowDetails>
-                  <ShowStatus status={show.status}>
-                    {show.status.charAt(0).toUpperCase() + show.status.slice(1)}
-                  </ShowStatus>
-                </ShowItem>
-              ))}
-            </ShowsList>
-          </DashboardCard>
-          
-          <DashboardCard>
-            <CardHeader>
-              <CardTitle>Fan Analytics</CardTitle>
-              <ViewAllLink>Full Report</ViewAllLink>
-            </CardHeader>
-            <StatsGrid>
-              <StatItem>
-                <StatValue>{fanStats.total}</StatValue>
-                <StatLabel>Total Fans</StatLabel>
-              </StatItem>
-              <StatItem>
-                <StatValue>+{fanStats.newThisMonth}</StatValue>
-                <StatLabel>New This Month</StatLabel>
-              </StatItem>
-              <StatItem>
-                <StatValue>{fanStats.engagement}</StatValue>
-                <StatLabel>Engagement Rate</StatLabel>
-              </StatItem>
-            </StatsGrid>
-            <TopCities>
-              <TopCitiesTitle>Top Cities</TopCitiesTitle>
-              <CityList>
-                {fanStats.topCities.map((city, index) => (
-                  <CityItem key={index}>{city}</CityItem>
-                ))}
-              </CityList>
-            </TopCities>
-          </DashboardCard>
-          
-          <DashboardCard>
-            <CardHeader>
-              <CardTitle>Recent Messages</CardTitle>
-              <ViewAllLink>View All</ViewAllLink>
-            </CardHeader>
-            <MessagesList>
-              {recentMessages.map(message => (
-                <MessageItem key={message.id} unread={!message.read}>
-                  <MessageSender>{message.from}</MessageSender>
-                  <MessageSubject>{message.subject}</MessageSubject>
-                  <MessageDate>{new Date(message.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</MessageDate>
-                </MessageItem>
-              ))}
-            </MessagesList>
-            <ComposeButton>Compose New Message</ComposeButton>
-          </DashboardCard>
-        </DashboardGrid>
-      </Container>
-    </PageWrapper>
-  )
-}
-
-const PageWrapper = styled.main`
-  width: 100%;
-  min-height: calc(100vh - 80px);
-  background-color: ${({ theme }) => theme.colors.background};
-  padding: ${({ theme }) => theme.space.xl} 0;
+const DashboardContainer = styled.div`
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
 `
 
-const Container = styled.div`
-  max-width: 1200px;
+const DashboardContent = styled.div`
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 ${({ theme }) => theme.space.lg};
 `
 
-const DashboardHeader = styled.div`
+const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: ${({ theme }) => theme.space.xl};
+  margin-bottom: 2rem;
   
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: ${({ theme }) => theme.space.lg};
+  h1 {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
   }
 `
 
-const WelcomeSection = styled.div`
+const TabNavigation = styled.div`
   display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.space.lg};
+  gap: 1rem;
+  margin-bottom: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
 `
 
-const ArtistAvatar = styled.img`
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid ${({ theme }) => theme.colors.primary};
-`
-
-const WelcomeText = styled.div``
-
-const Greeting = styled.h1`
-  font-size: ${({ theme }) => theme.fontSizes['2xl']};
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
-  margin-bottom: ${({ theme }) => theme.space.xs};
-  color: ${({ theme }) => theme.colors.darkText};
-`
-
-const Status = styled.p`
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  color: ${({ theme }) => theme.colors.lightText};
-  margin: 0;
-`
-
-const StatusHighlight = styled.span`
-  color: ${({ theme }) => theme.colors.primary};
-  font-weight: ${({ theme }) => theme.fontWeights.semiBold};
-`
-
-const ActionButtons = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.space.md};
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    width: 100%;
-    flex-direction: column;
-  }
-`
-
-const ActionButton = styled.button`
-  padding: ${({ theme }) => `${theme.space.sm} ${theme.space.lg}`};
-  background-color: ${({ theme, primary }) => primary ? theme.colors.primary : 'transparent'};
-  color: ${({ theme, primary }) => primary ? 'white' : theme.colors.primary};
-  border: 1px solid ${({ theme }) => theme.colors.primary};
-  border-radius: ${({ theme }) => theme.radii.md};
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
-  transition: ${({ theme }) => theme.transitions.default};
-  
-  &:hover {
-    background-color: ${({ theme, primary }) => primary ? theme.colors.primaryDark : 'rgba(26, 115, 232, 0.1)'};
-    border-color: ${({ theme, primary }) => primary ? theme.colors.primaryDark : theme.colors.primary};
-  }
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    width: 100%;
-  }
-`
-
-const DashboardGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: ${({ theme }) => theme.space.xl};
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    grid-template-columns: 1fr;
-  }
-`
-
-const DashboardCard = styled.div`
-  background-color: white;
-  border-radius: ${({ theme }) => theme.radii.lg};
-  box-shadow: ${({ theme }) => theme.shadows.md};
-  padding: ${({ theme }) => theme.space.lg};
-  height: 100%;
-`
-
-const CardHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${({ theme }) => theme.space.lg};
-`
-
-const CardTitle = styled.h2`
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  font-weight: ${({ theme }) => theme.fontWeights.semiBold};
-  color: ${({ theme }) => theme.colors.darkText};
-  margin: 0;
-`
-
-const ViewAllLink = styled.a`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.primary};
-  cursor: pointer;
-  
-  &:hover {
-    text-decoration: underline;
-  }
-`
-
-const ShowsList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.space.md};
-`
-
-const ShowItem = styled.div`
-  display: flex;
-  align-items: center;
-  padding: ${({ theme }) => theme.space.md};
-  border-radius: ${({ theme }) => theme.radii.md};
-  background-color: ${({ theme }) => theme.colors.background};
-  transition: ${({ theme }) => theme.transitions.default};
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: ${({ theme }) => theme.shadows.sm};
-  }
-`
-
-const ShowDate = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 50px;
-  background-color: ${({ theme }) => theme.colors.primary};
+const Tab = styled(motion.button)`
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  background: ${props => props.active ? 'rgba(255, 255, 255, 0.2)' : 'transparent'};
   color: white;
-  border-radius: ${({ theme }) => theme.radii.md};
-  margin-right: ${({ theme }) => theme.space.md};
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
 `
 
-const ShowDay = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
-  line-height: 1;
-`
-
-const ShowMonth = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  text-transform: uppercase;
-`
-
-const ShowDetails = styled.div`
-  flex: 1;
-`
-
-const ShowVenue = styled.div`
-  font-weight: ${({ theme }) => theme.fontWeights.semiBold};
-  color: ${({ theme }) => theme.colors.darkText};
-`
-
-const ShowLocation = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.lightText};
-`
-
-const ShowStatus = styled.div`
-  padding: ${({ theme }) => `${theme.space.xs} ${theme.space.sm}`};
-  border-radius: ${({ theme }) => theme.radii.sm};
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
-  text-transform: uppercase;
-  background-color: ${({ theme, status }) => 
-    status === 'confirmed' ? 'rgba(76, 175, 80, 0.1)' : 
-    status === 'pending' ? 'rgba(255, 193, 7, 0.1)' : 
-    'rgba(244, 67, 54, 0.1)'
-  };
-  color: ${({ theme, status }) => 
-    status === 'confirmed' ? theme.colors.success : 
-    status === 'pending' ? theme.colors.warning : 
-    theme.colors.error
-  };
+const ContentArea = styled(motion.div)`
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 2rem;
+  min-height: 600px;
 `
 
 const StatsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: ${({ theme }) => theme.space.md};
-  margin-bottom: ${({ theme }) => theme.space.lg};
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 `
 
-const StatItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: ${({ theme }) => theme.space.md};
-  background-color: ${({ theme }) => theme.colors.background};
-  border-radius: ${({ theme }) => theme.radii.md};
-`
-
-const StatValue = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.xl};
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
-  color: ${({ theme }) => theme.colors.primary};
-  margin-bottom: ${({ theme }) => theme.space.xs};
-`
-
-const StatLabel = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.lightText};
-`
-
-const TopCities = styled.div`
-  margin-top: ${({ theme }) => theme.space.lg};
-`
-
-const TopCitiesTitle = styled.h3`
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  font-weight: ${({ theme }) => theme.fontWeights.semiBold};
-  margin-bottom: ${({ theme }) => theme.space.md};
-  color: ${({ theme }) => theme.colors.darkText};
-`
-
-const CityList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.space.sm};
-`
-
-const CityItem = styled.div`
-  padding: ${({ theme }) => `${theme.space.xs} ${theme.space.sm}`};
-  background-color: ${({ theme }) => theme.colors.background};
-  border-radius: ${({ theme }) => theme.radii.full};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.darkText};
-`
-
-const MessagesList = styled.div`
-  display: flex;
-  flex-direction: column;
-`
-
-const MessageItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.space.md};
-  border-left: 3px solid ${({ theme, unread }) => unread ? theme.colors.primary : 'transparent'};
-  background-color: ${({ theme, unread }) => unread ? 'rgba(26, 115, 232, 0.05)' : theme.colors.background};
-  margin-bottom: ${({ theme }) => theme.space.sm};
-  border-radius: ${({ theme }) => theme.radii.sm};
-  cursor: pointer;
-  transition: ${({ theme }) => theme.transitions.default};
-  
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.background};
-  }
-`
-
-const MessageSender = styled.div`
-  font-weight: ${({ theme }) => theme.fontWeights.semiBold};
-  color: ${({ theme }) => theme.colors.darkText};
-`
-
-const MessageSubject = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.lightText};
-  margin: ${({ theme }) => theme.space.xs} 0;
-`
-
-const MessageDate = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  color: ${({ theme }) => theme.colors.lightText};
-  align-self: flex-end;
-`
-
-const ComposeButton = styled.button`
-  width: 100%;
-  padding: ${({ theme }) => theme.space.md};
-  background-color: ${({ theme }) => theme.colors.primary};
+const StatCard = styled(motion.div)`
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1.5rem;
+  border-radius: 12px;
   color: white;
-  border: none;
-  border-radius: ${({ theme }) => theme.radii.md};
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
-  margin-top: ${({ theme }) => theme.space.lg};
-  transition: ${({ theme }) => theme.transitions.default};
   
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.primaryDark};
+  .stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .stat-label {
+    opacity: 0.8;
+    font-size: 0.9rem;
   }
 `
+
+const ActionGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+`
+
+const ActionCard = styled(motion.div)`
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  
+  h3 {
+    margin: 0 0 1rem 0;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  p {
+    color: #666;
+    margin-bottom: 1rem;
+  }
+  
+  button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+`
+
+const MusicTrack = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  
+  .track-info {
+    flex: 1;
+    
+    h4 {
+      margin: 0 0 0.25rem 0;
+      color: #333;
+    }
+    
+    p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+  }
+  
+  .track-stats {
+    display: flex;
+    gap: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .play-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+`
+
+const GigCard = styled(motion.div)`
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #667eea;
+  
+  .gig-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    
+    h3 {
+      margin: 0;
+      color: #333;
+    }
+    
+    .gig-date {
+      background: #667eea;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+  }
+  
+  .gig-details {
+    display: flex;
+    gap: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    
+    span {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+  }
+  
+  .gig-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: #e8f5e8;
+    color: #2d5a2d;
+  }
+`
+
+const FanCard = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  .fan-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+  }
+  
+  .fan-info {
+    flex: 1;
+    
+    h4 {
+      margin: 0 0 0.25rem 0;
+      color: #333;
+    }
+    
+    p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+  }
+  
+  .fan-stats {
+    display: flex;
+    gap: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+  }
+`
+
+const ArtistDashboard = () => {
+  const [activeTab, setActiveTab] = useState('overview')
+  const [playingTrack, setPlayingTrack] = useState(null)
+  const navigate = useNavigate()
+
+  const tabs = [
+    { id: 'overview', label: 'Overview', icon: BarChart3 },
+    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'music', label: 'Music', icon: Music },
+    { id: 'gigs', label: 'Gigs', icon: Calendar },
+    { id: 'fans', label: 'Fans', icon: Users },
+    { id: 'actions', label: 'Actions', icon: Settings }
+  ]
+
+  const stats = [
+    { label: 'Total Streams', value: '2.4M', icon: Play, trend: '+12%' },
+    { label: 'Monthly Listeners', value: '156K', icon: Users, trend: '+8%' },
+    { label: 'Revenue', value: '$12,450', icon: DollarSign, trend: '+15%' },
+    { label: 'Upcoming Gigs', value: '8', icon: Calendar, trend: '+3' }
+  ]
+
+  const tracks = [
+    { id: 1, title: 'Midnight Dreams', album: 'Nocturnal', plays: '1.2M', likes: '45K' },
+    { id: 2, title: 'Electric Pulse', album: 'Synth Wave', plays: '890K', likes: '32K' },
+    { id: 3, title: 'Neon Lights', album: 'City Nights', plays: '756K', likes: '28K' },
+    { id: 4, title: 'Digital Love', album: 'Future Sound', plays: '623K', likes: '21K' }
+  ]
+
+  const gigs = [
+    { 
+      id: 1, 
+      venue: 'Blue Note Jazz Club', 
+      date: 'Dec 15', 
+      time: '9:00 PM', 
+      location: 'New York, NY',
+      status: 'Confirmed',
+      fee: '$2,500'
+    },
+    { 
+      id: 2, 
+      venue: 'The Fillmore', 
+      date: 'Dec 22', 
+      time: '8:30 PM', 
+      location: 'San Francisco, CA',
+      status: 'Pending',
+      fee: '$3,200'
+    },
+    { 
+      id: 3, 
+      venue: 'House of Blues', 
+      date: 'Jan 5', 
+      time: '10:00 PM', 
+      location: 'Chicago, IL',
+      status: 'Confirmed',
+      fee: '$2,800'
+    }
+  ]
+
+  const topFans = [
+    { id: 1, name: 'Sarah Johnson', engagement: '95%', spent: '$245' },
+    { id: 2, name: 'Mike Chen', engagement: '87%', spent: '$189' },
+    { id: 3, name: 'Emma Davis', engagement: '82%', spent: '$156' },
+    { id: 4, name: 'Alex Rodriguez', engagement: '79%', spent: '$134' }
+  ]
+
+  const handlePlayTrack = (trackId) => {
+    setPlayingTrack(playingTrack === trackId ? null : trackId)
+  }
+
+  const handleVisitCommunity = () => {
+    navigate('/customize-community')
+  }
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return (
+          <div>
+            <StatsGrid>
+              {stats.map((stat, index) => (
+                <StatCard
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <div className="stat-header">
+                    <stat.icon size={24} />
+                    <span style={{ color: '#4ade80', fontSize: '0.9rem', fontWeight: '600' }}>
+                      {stat.trend}
+                    </span>
+                  </div>
+                  <div className="stat-value">{stat.value}</div>
+                  <div className="stat-label">{stat.label}</div>
+                </StatCard>
+              ))}
+            </StatsGrid>
+
+            <ActionGrid>
+              <ActionCard
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <h3><Music size={20} /> Upload New Track</h3>
+                <p>Share your latest creation with your fans and grow your audience.</p>
+                <button>Upload Music</button>
+              </ActionCard>
+
+              <ActionCard
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <h3><Calendar size={20} /> Book a Gig</h3>
+                <p>Find and book venues for your upcoming performances.</p>
+                <button>Find Venues</button>
+              </ActionCard>
+
+              <ActionCard
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <h3><Users size={20} /> Engage Fans</h3>
+                <p>Connect with your audience through messages and exclusive content.</p>
+                <button>Message Fans</button>
+              </ActionCard>
+
+              <ActionCard
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <h3><TrendingUp size={20} /> Analytics</h3>
+                <p>Track your performance metrics and audience insights.</p>
+                <button>View Analytics</button>
+              </ActionCard>
+            </ActionGrid>
+          </div>
+        )
+
+      case 'profile':
+        return (
+          <div>
+            <h2 style={{ marginBottom: '2rem', color: '#333' }}>Artist Profile</h2>
+            <ActionGrid>
+              <ActionCard
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <h3><User size={20} /> Profile Information</h3>
+                <p>Update your artist bio, photos, and contact information.</p>
+                <button>Edit Profile</button>
+              </ActionCard>
+
+              <ActionCard
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <h3><Settings size={20} /> Account Settings</h3>
+                <p>Manage your account preferences and privacy settings.</p>
+                <button>Manage Settings</button>
+              </ActionCard>
+
+              <ActionCard
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <h3><Eye size={20} /> Public Profile</h3>
+                <p>Preview how your profile appears to fans and venues.</p>
+                <button>Preview Profile</button>
+              </ActionCard>
+            </ActionGrid>
+          </div>
+        )
+
+      case 'music':
+        return (
+          <div>
+            <h2 style={{ marginBottom: '2rem', color: '#333' }}>Your Music</h2>
+            {tracks.map((track, index) => (
+              <MusicTrack
+                key={track.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.01 }}
+              >
+                <button 
+                  className="play-button"
+                  onClick={() => handlePlayTrack(track.id)}
+                >
+                  {playingTrack === track.id ? <Pause size={16} /> : <Play size={16} />}
+                </button>
+                <div className="track-info">
+                  <h4>{track.title}</h4>
+                  <p>{track.album}</p>
+                </div>
+                <div className="track-stats">
+                  <span><Play size={14} /> {track.plays}</span>
+                  <span><Heart size={14} /> {track.likes}</span>
+                </div>
+              </MusicTrack>
+            ))}
+          </div>
+        )
+
+      case 'gigs':
+        return (
+          <div>
+            <h2 style={{ marginBottom: '2rem', color: '#333' }}>Upcoming Gigs</h2>
+            {gigs.map((gig, index) => (
+              <GigCard
+                key={gig.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.01 }}
+              >
+                <div className="gig-header">
+                  <h3>{gig.venue}</h3>
+                  <div className="gig-date">{gig.date}</div>
+                </div>
+                <div className="gig-details">
+                  <span><MapPin size={14} /> {gig.location}</span>
+                  <span><Clock size={14} /> {gig.time}</span>
+                  <span><DollarSign size={14} /> {gig.fee}</span>
+                </div>
+                <span className="gig-status">{gig.status}</span>
+              </GigCard>
+            ))}
+          </div>
+        )
+
+      case 'fans':
+        return (
+          <div>
+            <h2 style={{ marginBottom: '2rem', color: '#333' }}>Top Fans</h2>
+            {topFans.map((fan, index) => (
+              <FanCard
+                key={fan.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.01 }}
+              >
+                <div className="fan-avatar">
+                  {fan.name.split(' ').map(n => n[0]).join('')}
+                </div>
+                <div className="fan-info">
+                  <h4>{fan.name}</h4>
+                  <p>Engagement: {fan.engagement}</p>
+                </div>
+                <div className="fan-stats">
+                  <span><DollarSign size={14} /> {fan.spent}</span>
+                  <span><Star size={14} /> Top Fan</span>
+                </div>
+              </FanCard>
+            ))}
+          </div>
+        )
+
+      case 'actions':
+        return (
+          <div>
+            <h2 style={{ marginBottom: '2rem', color: '#333' }}>Quick Actions</h2>
+            <ActionGrid>
+              <ActionCard
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <h3><Users size={20} /> Visit Community</h3>
+                <p>Access your community space to connect with fans and manage your presence.</p>
+                <button onClick={handleVisitCommunity}>Visit Community</button>
+              </ActionCard>
+
+              <ActionCard
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <h3><Music size={20} /> Release Management</h3>
+                <p>Plan and schedule your upcoming releases and promotional campaigns.</p>
+                <button>Manage Releases</button>
+              </ActionCard>
+
+              <ActionCard
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <h3><MessageCircle size={20} /> Fan Engagement</h3>
+                <p>Send updates, exclusive content, and messages to your fan base.</p>
+                <button>Engage Fans</button>
+              </ActionCard>
+
+              <ActionCard
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <h3><Share2 size={20} /> Social Media</h3>
+                <p>Cross-post your content and manage your social media presence.</p>
+                <button>Manage Social</button>
+              </ActionCard>
+
+              <ActionCard
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <h3><Calendar size={20} /> Tour Planning</h3>
+                <p>Plan your tour dates and coordinate with venues and promoters.</p>
+                <button>Plan Tour</button>
+              </ActionCard>
+
+              <ActionCard
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <h3><DollarSign size={20} /> Revenue Analytics</h3>
+                <p>Track your earnings from streams, merchandise, and live performances.</p>
+                <button>View Revenue</button>
+              </ActionCard>
+            </ActionGrid>
+          </div>
+        )
+
+      default:
+        return null
+    }
+  }
+
+  return (
+    <DashboardContainer>
+      <DashboardContent>
+        <Header>
+          <h1>Artist Dashboard</h1>
+        </Header>
+
+        <TabNavigation>
+          {tabs.map((tab) => (
+            <Tab
+              key={tab.id}
+              active={activeTab === tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <tab.icon size={18} />
+              {tab.label}
+            </Tab>
+          ))}
+        </TabNavigation>
+
+        <ContentArea
+          key={activeTab}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {renderContent()}
+        </ContentArea>
+      </DashboardContent>
+    </DashboardContainer>
+  )
+}
 
 export default ArtistDashboard
